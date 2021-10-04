@@ -1,0 +1,24 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  # debian server
+  config.vm.define "debian-utrains-jenkins1" do |debian|
+    debian.vm.box = "debian/buster64"
+    debian.vm.hostname = "debian-utrains-jenkins1"
+    debian.vm.box_url = "debian/buster64"
+    debian.vm.network :private_network, ip: "192.168.5.2"
+    debian.vm.provider :virtualbox do |v|
+      v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      v.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+      v.customize ["modifyvm", :id, "--memory", 3072]
+      v.customize ["modifyvm", :id, "--name", "debian-utrains-jenkins1"]
+      v.customize ["modifyvm", :id, "--cpus", "2"]
+    end
+    config.vm.provision "shell", inline: <<-SHELL
+      sed -i 's/ChallengeResponseAuthentication no/ChallengeResponseAuthentication yes/g' /etc/ssh/sshd_config    
+      service ssh restart
+    SHELL
+    debian.vm.provision "shell", path: "debian_jenkins_vagrant.sh"
+  end
+end

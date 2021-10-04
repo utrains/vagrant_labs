@@ -1,0 +1,1 @@
+{"rsync":{"/vagrant":{"type":"rsync","guestpath":"/vagrant","hostpath":"/home/hermann90/vegrant_utrains/vegrant_utrains/vagrant-jenkins/jenkins","disabled":false,"__vagrantfile":true,"owner":"vagrant","group":"vagrant"}}}

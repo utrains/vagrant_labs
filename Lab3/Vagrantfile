@@ -1,0 +1,48 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+
+  # Utrains debian 
+  config.vm.define "debian-utrains" do |debian|
+    debian.vm.box = "debian/buster64"
+    debian.vm.hostname = "debian-utrains"
+    debian.vm.box_url = "debian/buster64"
+    debian.vm.network :private_network, ip: "192.168.5.2"
+    debian.vm.provider :virtualbox do |v|
+      v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      v.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+      v.customize ["modifyvm", :id, "--memory", 1024]
+      v.customize ["modifyvm", :id, "--name", "debian-utrains"]
+      v.customize ["modifyvm", :id, "--cpus", "1"]
+    end
+    config.vm.provision "shell", inline: <<-SHELL
+      sed -i 's/ChallengeResponseAuthentication no/ChallengeResponseAuthentication yes/g' /etc/ssh/sshd_config
+      service ssh restart
+    SHELL
+    debian.vm.provision "shell", path: "install_debian.sh"
+  end
+
+  
+  # Utrains Centos server
+  config.vm.define "centos7-utrains" do |centos7|
+    centos7.vm.box = "centos/7"
+    centos7.vm.hostname = "centos7-utrains"
+    centos7.vm.box_url = "centos/7"
+    centos7.vm.network :private_network, ip: "192.168.5.3"
+    centos7.vm.provider :virtualbox do |v|
+      v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      v.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+      v.customize ["modifyvm", :id, "--memory", 1024]
+      v.customize ["modifyvm", :id, "--name", "centos7-utrains"]
+      v.customize ["modifyvm", :id, "--cpus", "1"]
+    end
+    config.vm.provision "shell", inline: <<-SHELL
+      sed -i 's/ChallengeResponseAuthentication no/ChallengeResponseAuthentication yes/g' /etc/ssh/sshd_config    
+      service ssh restart
+    SHELL
+  end
+
+
+end
+
